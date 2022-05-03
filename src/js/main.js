@@ -5,7 +5,7 @@ let tabParent = document.querySelector('.tabheader__items');
 function hideContent() {
     tabcontent.forEach(item => {
         item.classList.add('hide')
-        item.classList.remove('show', 'fade')
+        item.classList.remove('show',  'fade')
     })
 
     tabItems.forEach(item => {
