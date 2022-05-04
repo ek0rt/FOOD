@@ -43,12 +43,20 @@ tabParent.addEventListener('click', (e) => {
 const deadline = '2022-05-05T00:43:40';
 
 function getDifference(endtime) {
+  let days, hours, minutes, seconds;
   const difference = Date.parse(endtime) - Date.parse(new Date());
 
-  const days = Math.floor( difference / (1000 * 60 * 60 * 24));
-  const hours = Math.floor( difference / (1000 * 60 * 60) % 24);
-  const minutes = Math.floor( difference / (1000 * 60) % 60);
-  const seconds = Math.floor( (difference / 1000) % 60);
+  if(difference <= 0) {
+    days = 0;
+    hours = 0;
+    minutes = 0;
+    seconds = 0;
+  } else {
+     days = Math.floor( difference / (1000 * 60 * 60 * 24));
+     hours = Math.floor( difference / (1000 * 60 * 60) % 24);
+     minutes = Math.floor( difference / (1000 * 60) % 60);
+     seconds = Math.floor( (difference / 1000) % 60);
+  }
 
   return {
     total: difference,
@@ -94,7 +102,7 @@ function getDifference(endtime) {
 
 
  
-getElements('2022-05-05T00:43:06');
+getElements('2022-05-11T00:43:06');
 hideContent()
 showContent()
 
