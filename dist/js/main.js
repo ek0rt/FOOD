@@ -1,3 +1,6 @@
+window.addEventListener('DOMContentLoaded', () => {
+
+// Tabs
 let tabcontent = document.querySelectorAll('.tabcontent');
 let tabItems = document.querySelectorAll('.tabheader__item');
 let tabParent = document.querySelector('.tabheader__items');
@@ -5,7 +8,7 @@ let tabParent = document.querySelector('.tabheader__items');
 function hideContent() {
     tabcontent.forEach(item => {
         item.classList.add('hide')
-        item.classList.remove('show', 'fade')
+        item.classList.remove('show',  'fade')
     })
 
     tabItems.forEach(item => {
@@ -35,8 +38,67 @@ tabParent.addEventListener('click', (e) => {
 
 })
 
+// Timer
+
+const deadline = '2022-05-05T00:43:40';
+
+function getDifference(endtime) {
+  const difference = Date.parse(endtime) - Date.parse(new Date());
+
+  const days = Math.floor( difference / (1000 * 60 * 60 * 24));
+  const hours = Math.floor( difference / (1000 * 60 * 60) % 24);
+  const minutes = Math.floor( difference / (1000 * 60) % 60);
+  const seconds = Math.floor( (difference / 1000) % 60);
+
+  return {
+    total: difference,
+    days,
+    hours,
+    minutes,
+    seconds,
+  }
+}
+  function getElements(endtime) {
+    const days = document.querySelector('#days');
+    const hours = document.querySelector('#hours');
+    const minutes = document.querySelector('#minutes');
+    const seconds = document.querySelector('#seconds');
+    const counter = setInterval(startTimer, 1000);
+
+    function getZero(num) {
+      if(num > 0 && num < 10) {
+        return `0${num}`
+      } else { return num }
+    } ;
+
+    startTimer() 
+    function startTimer() {
+
+      const difference = getDifference(endtime);
+
+      days.textContent = getZero(difference.days);
+      hours.textContent = getZero(difference.hours);
+      minutes.textContent = getZero(difference.minutes);
+      seconds.textContent = getZero(difference.seconds);
+
+      if(difference.total <= 0) {
+        clearInterval(counter);
+      }
+
+
+    }
+    
+  }
+
+
+
+
+ 
+getElements('2022-05-05T00:43:06');
 hideContent()
 showContent()
+
+});
 
 
 
