@@ -92,12 +92,46 @@ function getDifference(endtime) {
       if(difference.total <= 0) {
         clearInterval(counter);
       }
-
-
     }
+
+    const box = document.querySelector('.tabcontainer');
     
   }
 
+  // Modal
+
+const modalCLose = document.querySelector('.modal__close');
+const modal = document.querySelector('.modal');
+const modalTrigger = document.querySelectorAll('[data-modal]');
+
+modalTrigger.forEach(btn => {
+  btn.addEventListener('click', () => {
+    modal.classList.add('show');
+    modal.classList.remove('hide');
+    document.body.style.overflow = 'hidden';
+  })
+})
+
+function closeModal() {
+  modal.classList.add('hide');
+  modal.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+modalCLose.addEventListener('click',closeModal);
+
+
+document.addEventListener('click', (e) => {
+  if(e.target === modal) {
+    closeModal()
+  }
+})
+
+document.addEventListener('keydown', (e) => {
+  if(e.code === 'Escape' && modal.classList.contains('show')) {
+    closeModal()
+  }
+})
 
 
 
