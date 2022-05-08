@@ -100,40 +100,59 @@ function getDifference(endtime) {
 
   // Modal
 
-const modalCLose = document.querySelector('.modal__close');
-const modal = document.querySelector('.modal');
-const modalTrigger = document.querySelectorAll('[data-modal]');
+  const modalTrigger = document.querySelectorAll('[data-modal');
+  const modal = document.querySelector('.modal');
+  const modalClose = document.querySelector('[data-close');
 
-modalTrigger.forEach(btn => {
-  btn.addEventListener('click', () => {
+  modalTrigger.forEach(btn => {
+    btn.addEventListener('click', openModal
+    )
+  }
+  );
+
+  function openModal() {
     modal.classList.add('show');
     modal.classList.remove('hide');
     document.body.style.overflow = 'hidden';
-  })
-})
-
-function closeModal() {
-  modal.classList.add('hide');
-  modal.classList.remove('show');
-  document.body.style.overflow = '';
-}
-
-modalCLose.addEventListener('click',closeModal);
-
-
-document.addEventListener('click', (e) => {
-  if(e.target === modal) {
-    closeModal()
+    // clearInterval(modalTimerId);
   }
-})
 
-document.addEventListener('keydown', (e) => {
-  if(e.code === 'Escape' && modal.classList.contains('show')) {
-    closeModal()
+  // const modalTimerId = setTimeout(openModal, 3000);
+
+  function closeModal() {
+    modal.classList.add('hide');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
   }
-})
+ 
+  modalClose.addEventListener('click',  closeModal);
+
+  document.addEventListener('keydown', (e) => {
+    if(e.code == 'Escape') {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if(modal == e.target) {
+      closeModal();
+    }
+  });
+
+  function showModalByScroll() {
+    if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+      openModal();
+      window.removeEventListener('scroll', showModalByScroll);
+    } 
+  }
+
+  window.addEventListener('scroll', showModalByScroll);
 
 
+
+
+
+  
 
  
 getElements('2022-05-11T00:43:06');
