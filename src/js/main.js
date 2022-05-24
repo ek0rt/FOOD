@@ -184,36 +184,23 @@ function getDifference(endtime) {
     }
   }
 
-  new getCards(
-    "img/tabs/vegy.jpg",
-    "vegy",
-    'Меню "Фитнес"',
-    'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-   9,
-    '.menu .container',
- 
+  async function getInfo(url) {
+    const res = await fetch(url)
 
-  ).render();
+    if(!res.ok) {
+      throw new Error(`Error: ${res.status}`)
+    }
 
-  new getCards(
-    "img/tabs/post.jpg",
-    "post",
-    'Меню "Постное"',
-    'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-    14,
-    ".menu .container",
-    'menu__item',
-).render();
+    return await res.json();
+  } 
 
-new getCards(
-    "img/tabs/elite.jpg",
-    "elite",
-    'Меню “Премиум”',
-    'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-    21,
-    ".menu .container",
-    'menu__item',
-).render();
+  getInfo('http://localhost:3000/menu')
+  .then(data => {
+    data.forEach(({img, altimg, title, descr, price}) => {
+      new getCards(img, altimg, title, descr, price, '.menu .container').render();
+    })
+  })
+
 
 // Forms
 
@@ -225,10 +212,19 @@ const message = {
 };
 
 forms.forEach(item => {
-    postData(item);
+  bindPostData(item);
 });
 
-function postData(form) {
+async function postData(url, data) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-type': 'application/json; charset=utf-8'},
+      body: data,
+    })
+    return await res.json();
+  }
+
+function bindPostData(form) {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -240,20 +236,12 @@ function postData(form) {
         `;
         form.insertAdjacentElement('afterend', statusMessage);
     
-     
         const formData = new FormData(form);
 
-        const object = {};
-        formData.forEach(function(value, key){
-            object[key] = value;
-        });
-        const json = JSON.stringify(object);
+        const json = JSON.stringify(Object.fromEntries(formData.entries()))
 
-        fetch('../server.php', {
-          method: 'POST',
-          headers: {'Content-type': 'application/json; charset=utf-8'},
-          body: JSON.stringify(object),
-        }).then(data => data.text())
+     
+        postData('http://localhost:3000/requests', json)
         .then(data => {
             console.log(data);
             showThanksModal(message.success)
@@ -263,17 +251,6 @@ function postData(form) {
         }).finally(() => {
           form.reset();
         })
-
-        // request.addEventListener('load', () => {
-        //     if (request.status === 200) {
-        //         console.log(request.response);
-        //         showThanksModal(message.success)
-        //         form.reset();
-        //         statusMessage.remove();
-        //     } else {
-        //       showThanksModal(message.failure);
-        //     }
-        // });
     });
 }
 
@@ -306,7 +283,7 @@ function showThanksModal(message) {
 
 console.log('++++')
 
-getElements('2022-05-11T00:43:06');
+getElements('2022-06-11T00:43:06');
 hideContent()
 showContent()
 
