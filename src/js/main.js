@@ -5,10 +5,11 @@ let tabcontent = document.querySelectorAll('.tabcontent');
 let tabItems = document.querySelectorAll('.tabheader__item');
 let tabParent = document.querySelector('.tabheader__items');
 
+
 function hideContent() {
     tabcontent.forEach(item => {
         item.classList.add('hide')
-        item.classList.remove('show',  'fade')
+        item.classList.remove('show','fade')
     })
 
     tabItems.forEach(item => {
@@ -194,44 +195,12 @@ function getDifference(endtime) {
     return await res.json();
   } 
 
-  getInfo('http://localhost:3000/menu')
+  axios.get('http://localhost:3000/menu')
   .then(data => {
-    data.forEach(({img, altimg, title, descr, price}) => {
+    data.data.forEach(({img, altimg, title, descr, price}) => {
       new getCards(img, altimg, title, descr, price, '.menu .container').render();
     })
   })
-
-
-  // getInfo('http://localhost:3000/menu')
-  //   .then(data => createCard(data))
-
-  
-    // function createCard(data) {
-    //   data.forEach(({img, altimg, title, descr, price}) => {
-
-    //     price = price * 27;
-
-    //     const element = document.createElement('div');
-
-    //     element.classList.add('menu__item');
-
-    //     element.innerHTML = `
-        
-    //     <img src=${img} alt=${altimg}>
-    //     <h3 class="menu__item-subtitle">${title}</h3>
-    //     <div class="menu__item-descr">${descr}</div>
-    //     <div class="menu__item-divider"></div>
-    //     <div class="menu__item-price">
-    //         <div class="menu__item-cost">Цена:</div>
-    //         <div class="menu__item-total"><span>${price}</span> грн/день</div>
-    //       </div>
-    //     `;
-    //     document.querySelector('.menu .container').append(element);
-    //   })
-    // }
-
-
-  
 
 // Forms
 
@@ -312,7 +281,64 @@ function showThanksModal(message) {
 
 }
 
-console.log('++++')
+// Slider 
+
+const slides = document.querySelectorAll('.offer__slide')
+const prev = document.querySelector('.offer__slider-prev')
+const next = document.querySelector('.offer__slider-next')
+const counter = document.querySelector('#current')
+const total = document.querySelector('#total')
+
+let setIndex = 1;
+
+showSlides(setIndex)
+
+if(slides.length < 10) {
+  total.textContent = `0${slides.length}`
+} else {
+  total.textContent = slides.length
+}
+
+
+function showSlides(sIndex) {
+
+
+  if(sIndex > slides.length) {
+    setIndex = 1;
+  }
+
+  if(sIndex < 1) {
+    setIndex = slides.length;
+  }
+
+  slides.forEach((item) => item.style.display = 'none')
+
+  slides[setIndex - 1].style.display = 'block';
+
+  if(setIndex < 10) {
+    counter.textContent = `0${setIndex}`
+  } else {
+    counter.textContent = setIndex
+  }
+  
+
+
+}
+
+function changeSliderIndex(n) {
+  showSlides(setIndex += n)
+}
+
+prev.addEventListener('click', () => {
+  changeSliderIndex(-1)
+})
+
+next.addEventListener('click', () => {
+  changeSliderIndex(1)
+})
+
+
+
 
 getElements('2022-06-11T00:43:06');
 hideContent()
