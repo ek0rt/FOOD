@@ -309,8 +309,6 @@ if ( slides.length < 10) {
 }
 
 
-
-
 slidesInner.style.width = 100 * slides.length + '%'
 
 slides.forEach(item => {
@@ -333,24 +331,21 @@ next.addEventListener('click', () => {
   slidesInner.style.transform = `translateX(-${offset}px)`;
 
 
-  if (slideIndex == slides.length) {
-    slideIndex = 1;
+if (slideIndex == slides.length) {
+  slideIndex = 1;
 } else {
-    slideIndex++;
+  slideIndex++;
 }
 
-
-  if (slideIndex < 10) {
-    current.textContent =  `0${slideIndex}`;
+if (slideIndex < 10) {
+  current.textContent =  `0${slideIndex}`;
 } else {
-    current.textContent =  slideIndex;
+  current.textContent =  slideIndex;
 }
-
 
 
 
 console.log(slides.length)
-
 
 
 })
@@ -365,18 +360,22 @@ prev.addEventListener('click', () => {
 
   slidesInner.style.transform = `translateX(-${offset}px)`;
 
-
   if (slideIndex == 1) {
     slideIndex = slides.length;
 } else {
     slideIndex--;
 }
 
-if (slideIndex < 10) {
+  if (slideIndex < 10) {
     current.textContent =  `0${slideIndex}`;
 } else {
     current.textContent =  slideIndex;
 }
+
+
+
+
+
 
 
 })
