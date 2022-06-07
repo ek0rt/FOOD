@@ -5,10 +5,11 @@ let tabcontent = document.querySelectorAll('.tabcontent');
 let tabItems = document.querySelectorAll('.tabheader__item');
 let tabParent = document.querySelector('.tabheader__items');
 
+
 function hideContent() {
     tabcontent.forEach(item => {
         item.classList.add('hide')
-        item.classList.remove('show',  'fade')
+        item.classList.remove('show','fade')
     })
 
     tabItems.forEach(item => {
@@ -98,7 +99,7 @@ function getDifference(endtime) {
     
   }
 
-  // Modal
+//   // Modal
 
   const modalTrigger = document.querySelectorAll('[data-modal');
   const modal = document.querySelector('.modal');
@@ -184,38 +185,24 @@ function getDifference(endtime) {
     }
   }
 
-  new getCards(
-    "img/tabs/vegy.jpg",
-    "vegy",
-    'Меню "Фитнес"',
-    'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-   9,
-    '.menu .container',
- 
+  async function getInfo(url) {
+    const res = await fetch(url)
 
-  ).render();
+    if(!res.ok) {
+      throw new Error(`Error: ${res.status}`)
+    }
 
-  new getCards(
-    "img/tabs/post.jpg",
-    "post",
-    'Меню "Постное"',
-    'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-    14,
-    ".menu .container",
-    'menu__item',
-).render();
+    return await res.json();
+  } 
 
-new getCards(
-    "img/tabs/elite.jpg",
-    "elite",
-    'Меню “Премиум”',
-    'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-    21,
-    ".menu .container",
-    'menu__item',
-).render();
+  axios.get('http://localhost:3000/menu')
+  .then(data => {
+    data.data.forEach(({img, altimg, title, descr, price}) => {
+      new getCards(img, altimg, title, descr, price, '.menu .container').render();
+    })
+  })
 
-// Forms
+// // Forms
 
 const forms = document.querySelectorAll('form');
 const message = {
@@ -225,10 +212,19 @@ const message = {
 };
 
 forms.forEach(item => {
-    postData(item);
+  bindPostData(item);
 });
 
-function postData(form) {
+async function postData(url, data) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-type': 'application/json; charset=utf-8'},
+      body: data,
+    })
+    return await res.json();
+  }
+
+function bindPostData(form) {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -240,20 +236,12 @@ function postData(form) {
         `;
         form.insertAdjacentElement('afterend', statusMessage);
     
-     
         const formData = new FormData(form);
 
-        const object = {};
-        formData.forEach(function(value, key){
-            object[key] = value;
-        });
-        const json = JSON.stringify(object);
+        const json = JSON.stringify(Object.fromEntries(formData.entries()))
 
-        fetch('../server.php', {
-          method: 'POST',
-          headers: {'Content-type': 'application/json; charset=utf-8'},
-          body: JSON.stringify(object),
-        }).then(data => data.text())
+     
+        postData('http://localhost:3000/requests', json)
         .then(data => {
             console.log(data);
             showThanksModal(message.success)
@@ -263,17 +251,6 @@ function postData(form) {
         }).finally(() => {
           form.reset();
         })
-
-        // request.addEventListener('load', () => {
-        //     if (request.status === 200) {
-        //         console.log(request.response);
-        //         showThanksModal(message.success)
-        //         form.reset();
-        //         statusMessage.remove();
-        //     } else {
-        //       showThanksModal(message.failure);
-        //     }
-        // });
     });
 }
 
@@ -304,9 +281,359 @@ function showThanksModal(message) {
 
 }
 
-console.log('++++')
+// Slider 
 
-getElements('2022-05-11T00:43:06');
+let slideIndex = 1;
+let offset = 0;
+
+const slides = document.querySelectorAll('.offer__slide')
+const prev = document.querySelector('.offer__slider-prev')
+const slider = document.querySelector('.offer__slider')
+const next = document.querySelector('.offer__slider-next')
+const current = document.querySelector('#current')
+const total = document.querySelector('#total')
+const slidesWrapper = document.querySelector('.offer__slider-wrapper')
+const slidesInner = document.querySelector('.offer__slider-inner')
+const width = getComputedStyle(slidesInner).width
+
+let dotsArray = [];
+
+slider.style.position = 'relative';
+
+let dots = document.createElement('ol');
+
+dots.style.cssText = `
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 15;
+  display: flex;
+  justify-content: center;
+  margin-right: 15%;
+  margin-left: 15%;
+  list-style: none;
+`
+slider.append(dots);
+
+for(let i = 0; i < slides.length; i++) {
+  let dot = document.createElement('li');
+  dot.setAttribute('data-dot-point', i + 1);
+  dot.style.cssText = `
+  box-sizing: content-box;
+  flex: 0 1 auto;
+  width: 30px;
+  height: 6px;
+  margin-right: 3px;
+  margin-left: 3px;
+  cursor: pointer;
+  background-color: #fff;
+  background-clip: padding-box;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  opacity: .5;
+  transition: opacity .6s ease;
+  `;
+  dots.append(dot);
+  if(i == 0) {
+    dot.style.opacity = 1;
+  };
+  dotsArray.push(dot);
+};
+
+
+
+if ( slideIndex < 10) {
+  current.textContent =  `0${slideIndex}`;
+} else {
+  current.textContent =  slideIndex;
+}
+
+if ( slides.length < 10) {
+  total.textContent =  `0${slides.length}`;
+} else {
+  total.textContent =  slides.length;
+}
+
+
+slidesInner.style.width = 100 * slides.length + '%'
+
+slides.forEach(item => {
+  item.style.width = width;
+});
+
+slidesInner.style.display = 'flex';
+slidesInner.style.transition = '0.5s all';
+slidesWrapper.style.overflow = 'hidden';
+
+function slidesPlus() {
+  if (slideIndex == slides.length) {
+    slideIndex = 1;
+  } else {
+    slideIndex++;
+  }
+  
+  if (slideIndex < 10) {
+    current.textContent =  `0${slideIndex}`;
+  } else {
+    current.textContent =  slideIndex;
+  }
+}
+
+function slidesMinus() {
+  if (slideIndex == 1) {
+    slideIndex = slides.length;
+} else {
+    slideIndex--;
+}
+
+  if (slideIndex < 10) {
+    current.textContent =  `0${slideIndex}`;
+} else {
+    current.textContent =  slideIndex;
+}
+}
+
+function showSlideIndex() {
+  if (slideIndex < 10) {
+    current.textContent =  `0${slideIndex}`;
+} else {
+    current.textContent =  slideIndex;
+}
+}
+
+function deletNotDigits(str) {
+  return +str.replace(/\D/g, '');
+}
+
+next.addEventListener('click', () => {
+
+  if(offset == deletNotDigits(width) * (slides.length - 1)) {
+    offset = 0;
+  } else {
+    offset += deletNotDigits(width) ;
+  }
+
+  slidesInner.style.transform = `translateX(-${offset}px)`;
+
+  slidesPlus();
+
+
+  dotsArray.forEach(item => {
+    item.style.opacity = 0.5;
+  })
+
+  dotsArray[slideIndex - 1].style.opacity = 1;
+
+
+})
+
+prev.addEventListener('click', () => {
+
+  if(offset == 0) {
+   offset = deletNotDigits(width) * (slides.length - 1)
+  } else {
+    offset -= deletNotDigits(width);
+  }
+
+  slidesInner.style.transform = `translateX(-${offset}px)`;
+
+  slidesMinus();
+
+  dotsArray.forEach(item => {
+    item.style.opacity = 0.5;
+  })
+
+  dotsArray[slideIndex - 1].style.opacity = 1;
+
+})
+
+dotsArray.forEach(item => {
+  item.addEventListener('click', (e) => {
+    dotAtr = e.target.getAttribute('data-dot-point');
+
+    slideIndex = dotAtr;
+
+    offset = deletNotDigits(width) * (slideIndex - 1)
+    slidesInner.style.transform = `translateX(-${offset}px)`;
+  
+    showSlideIndex();
+
+    dotsArray.forEach(item => {
+      item.style.opacity = 0.5;
+    })
+
+    dotsArray[slideIndex - 1].style.opacity = 1;
+  
+  })
+})
+
+// showSlides(setIndex)
+
+// if(slides.length < 10) {
+//   total.textContent = `0${slides.length}`
+// } else {
+//   total.textContent = slides.length
+// }
+
+
+// function showSlides(sIndex) {
+
+
+//   if(sIndex > slides.length) {
+//     setIndex = 1;
+//   }
+
+//   if(sIndex < 1) {
+//     setIndex = slides.length;
+//   }
+
+//   slides.forEach((item) => item.style.display = 'none')
+
+//   slides[setIndex - 1].style.display = 'block';
+
+//   if(setIndex < 10) {
+//     current.textContent = `0${setIndex}`
+//   } else {
+//     current.textContent = setIndex
+//   }
+  
+
+
+// }
+
+// function changeSliderIndex(n) {
+//   showSlides(setIndex += n)
+// }
+
+// prev.addEventListener('click', () => {
+//   changeSliderIndex(-1)
+// })
+
+// next.addEventListener('click', () => {
+//   changeSliderIndex(1)
+// })
+
+
+  // Calc
+
+
+  let result = document.querySelector('.calculating__result span')
+    
+  let weight, height, sex = 'female', ratio = 1.375, age;
+
+  if(localStorage.getItem('sex')) {
+    sex = localStorage.getItem('sex');
+  } else {
+    localStorage.setItem('sex', 'female');
+  }
+
+  if(localStorage.getItem('ratio')) {
+    ratio = localStorage.getItem('data-ratio');
+  } else {
+    localStorage.setItem('ratio', 1.375);
+  }
+
+  function setLocalInfo(selector, activeClass) {
+    let elements = document.querySelectorAll(selector);
+
+    elements.forEach(item => {
+      item.classList.remove(activeClass);
+      if(item.getAttribute('data-ratio') == localStorage.getItem('ratio')) {
+        item.classList.add(activeClass)
+      }
+      if(item.getAttribute('id') == localStorage.getItem('sex')) {
+        item.classList.add(activeClass)
+      }
+    })
+  }
+
+  setLocalInfo('.calculating__choose_big div', 'calculating__choose-item_active');
+  setLocalInfo('#gender div', 'calculating__choose-item_active');
+
+  function calcTotal() {
+
+    if(!weight || !height || !sex || !ratio || !age) {
+      result.textContent = '_______';
+      return;
+    }
+
+    if(sex === 'female') {
+      result.textContent = Math.round((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio)
+    } else {
+      result.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio)
+    }
+  }
+
+  function calrSystalicInfo(selector, activeClass) {
+    let elements = document.querySelectorAll(selector);
+
+    elements.forEach(item => {
+      item.addEventListener('click', (e) => {
+        if(e.target.getAttribute('data-ratio')) {
+          ratio = e.target.getAttribute('data-ratio');
+          localStorage.setItem('ratio', e.target.getAttribute('data-ratio'));
+        } else {
+          sex = e.target.getAttribute('id');
+          localStorage.setItem('sex', e.target.getAttribute('id'));
+
+        }
+
+        elements.forEach(item => {
+          item.classList.remove(activeClass)
+        })
+
+        e.target.classList.add(activeClass);
+        calcTotal()
+      })
+
+
+    })
+  }
+
+  function calcDymanicInfo(selector) {
+    let input = document.querySelector(selector);
+
+    input.addEventListener('input', () => {
+
+      if(input.value.match(/\D/g)) {
+        input.style.border = '2px solid red';
+      } else {
+        input.style.border = 'none';
+
+      }
+      switch(input.getAttribute('id')) {
+        case 'height':
+          height = +input.value;
+          break;
+        case 'weight':
+          weight = +input.value;
+          break
+        case 'age':
+          age = +input.value;
+          break
+      }
+      calcTotal()
+    })
+
+    input.addEventListener('click', () => {
+      console.log(weight, height, age)
+    })
+
+  
+
+  }
+
+
+  calcDymanicInfo('#age')
+  calcDymanicInfo('#height')
+  calcDymanicInfo('#weight')
+
+
+
+calrSystalicInfo('.calculating__choose_big div', 'calculating__choose-item_active');
+calrSystalicInfo('#gender div', 'calculating__choose-item_active');
+getElements('2022-06-11T00:43:06');
 hideContent()
 showContent()
 
