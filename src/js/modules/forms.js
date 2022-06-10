@@ -1,3 +1,5 @@
+import {closeModal, openModal} from './modal';
+
 function forms() {
 
 const forms = document.querySelectorAll('form');
@@ -7,7 +9,7 @@ const message = {
     failure: 'Что-то пошло не так...'
 };
 
-forms.forEach(item => {
+forms.forEach(item => { 
   bindPostData(item);
 });
 
@@ -78,4 +80,4 @@ function showThanksModal(message) {
 }
 }
 
-module.exports = forms;
+export default forms;

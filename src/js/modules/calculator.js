@@ -114,4 +114,4 @@ calrSystalicInfo('.calculating__choose_big div', 'calculating__choose-item_activ
 calrSystalicInfo('#gender div', 'calculating__choose-item_active');
 }
 
-module.exports = calc;
+export default calc;

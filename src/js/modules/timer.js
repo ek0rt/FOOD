@@ -61,4 +61,4 @@ function getDifference(endtime) {
   getElements('2022-06-11T00:43:06');
 }
 
-module.exports = timer;
+export default timer;

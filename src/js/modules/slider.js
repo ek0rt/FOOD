@@ -189,4 +189,4 @@ dotsArray.forEach(item => {
 })
 }
 
-module.exports = slider;
+export default slider;
