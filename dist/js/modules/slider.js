@@ -1,16 +1,19 @@
-function slider({container, slide, nextArrow, prevArrow, totalCounter, currentCounter, wrapper, field}) {
+function slider() {
+
+
+// Slider 
 
 let slideIndex = 1;
 let offset = 0;
 
-const slides = document.querySelectorAll(slide)
-const prev = document.querySelector(prevArrow)
-const slider = document.querySelector(container)
-const next = document.querySelector(nextArrow)
-const current = document.querySelector(currentCounter)
-const total = document.querySelector(totalCounter)
-const slidesWrapper = document.querySelector(wrapper)
-const slidesInner = document.querySelector(field)
+const slides = document.querySelectorAll('.offer__slide')
+const prev = document.querySelector('.offer__slider-prev')
+const slider = document.querySelector('.offer__slider')
+const next = document.querySelector('.offer__slider-next')
+const current = document.querySelector('#current')
+const total = document.querySelector('#total')
+const slidesWrapper = document.querySelector('.offer__slider-wrapper')
+const slidesInner = document.querySelector('.offer__slider-inner')
 const width = getComputedStyle(slidesInner).width
 
 let dotsArray = [];
@@ -119,12 +122,16 @@ function showSlideIndex() {
 }
 }
 
+function deletNotDigits(str) {
+  return +str.replace(/\D/g, '');
+}
+
 next.addEventListener('click', () => {
 
-  if(offset == +width.slice(0, 3) * (slides.length - 1)) {
+  if(offset == deletNotDigits(width) * (slides.length - 1)) {
     offset = 0;
   } else {
-    offset += +width.slice(0, 3) ;
+    offset += deletNotDigits(width) ;
   }
 
   slidesInner.style.transform = `translateX(-${offset}px)`;
@@ -144,9 +151,9 @@ next.addEventListener('click', () => {
 prev.addEventListener('click', () => {
 
   if(offset == 0) {
-   offset = +width.slice(0, 3) * (slides.length - 1)
+   offset = deletNotDigits(width) * (slides.length - 1)
   } else {
-    offset -= +width.slice(0, 3);
+    offset -= deletNotDigits(width);
   }
 
   slidesInner.style.transform = `translateX(-${offset}px)`;
@@ -167,7 +174,7 @@ dotsArray.forEach(item => {
 
     slideIndex = dotAtr;
 
-    offset = +width.slice(0, 3) * (slideIndex - 1)
+    offset = deletNotDigits(width) * (slideIndex - 1)
     slidesInner.style.transform = `translateX(-${offset}px)`;
   
     showSlideIndex();

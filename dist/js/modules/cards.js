@@ -1,4 +1,3 @@
-
 function cards() {
   // Используем классы для карточек
 
@@ -38,6 +37,16 @@ function cards() {
       this.parent.append(element);
     }
   }
+
+  async function getInfo(url) {
+    const res = await fetch(url)
+
+    if(!res.ok) {
+      throw new Error(`Error: ${res.status}`)
+    }
+
+    return await res.json();
+  } 
 
   axios.get('http://localhost:3000/menu')
   .then(data => {

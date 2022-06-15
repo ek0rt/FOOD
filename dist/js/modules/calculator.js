@@ -112,11 +112,6 @@ function calc() {
 
 calrSystalicInfo('.calculating__choose_big div', 'calculating__choose-item_active');
 calrSystalicInfo('#gender div', 'calculating__choose-item_active');
-
-// у нас есть массив с именем и фамилией
-let arr = ["Ilya", "Kantor"]
-
-
 }
 
 export default calc;

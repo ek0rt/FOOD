@@ -1,3 +1,5 @@
+
+   
 const postData = async (url, data) => {
     let res = await fetch(url, {
         method: "POST",
@@ -10,15 +12,15 @@ const postData = async (url, data) => {
     return await res.json();
 };
 
-async function getInfo(url) {
-    const res = await fetch(url)
+async function getResource(url) {
+    let res = await fetch(url);
 
-    if(!res.ok) {
-      throw new Error(`Error: ${res.status}`)
+    if (!res.ok) {
+        throw new Error(`Could not fetch ${url}, status: ${res.status}`);
     }
 
     return await res.json();
-  } 
+}
 
 export {postData};
-export {getInfo};
+export {getResource};

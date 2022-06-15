@@ -1,6 +1,7 @@
-function timer(deadline) {
+function timer() {
     // Timer
 
+const deadline = '2022-05-05T00:43:40';
 
 function getDifference(endtime) {
   let days, hours, minutes, seconds;
@@ -54,9 +55,10 @@ function getDifference(endtime) {
       }
     }
 
+    const box = document.querySelector('.tabcontainer');
     
   }
-  getElements(deadline);
+  getElements('2022-06-11T00:43:06');
 }
 
 export default timer;
